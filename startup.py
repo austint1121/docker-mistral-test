@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # Download and save the model and tokenizer
 
     # Define the directory where the model and tokenizer are saved
-    model_directory = "/mnt/nvme1n1/docker-mistral-test/Mixtral-8x22B-v0.1/"
+    model_directory = "/app/model"
 
     # Start timing the loading process
     print("STARTING MODEL LOAD FROM DISK")
