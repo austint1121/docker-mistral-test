@@ -42,17 +42,22 @@ if __name__ == "__main__":
         raise ValueError("HUGGINGFACE_TOKEN environment variable not set")
 
     # Download and save the model and tokenizer
-    print("STARTING MODEL DOWNLOAD")
-    download_time = time.time()  # Start timing
-    model = AutoModelForCausalLM.from_pretrained(model_name, token=hf_token)
-    tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
-    
-    # Time this
 
-    model.save_pretrained('/app/model')
-    tokenizer.save_pretrained('/app/model')
-    download_end = time.time() - download_time  # Calculate the time taken
-    print(f"Download time took: {download_end}")
+    # Define the directory where the model and tokenizer are saved
+    model_directory = "/mnt/nvme1n1/docker-mistral-test/Mixtral-8x22B-v0.1/"
+
+    # Start timing the loading process
+    print("STARTING MODEL LOAD FROM DISK")
+    load_time = time.time()
+
+    # Load the model and tokenizer from the specified directory
+    model = AutoModelForCausalLM.from_pretrained(model_directory)
+    tokenizer = AutoTokenizer.from_pretrained(model_directory)
+
+    # Calculate the time taken to load the model and tokenizer
+    load_end = time.time() - load_time
+    print(f"Loading time took: {load_end}")
+
 
     prompt_1 = "Hello, what is your name?"
     text_1, time_1 = generate_text(prompt_1)
