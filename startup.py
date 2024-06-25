@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Debugging output
     print(f"Contents of {model_directory}:")
     print(os.listdir(model_directory))
-    
+
     # Start timing the loading process
     print("STARTING MODEL LOAD FROM DISK")
     load_time = time.time()
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     config = AutoConfig.from_pretrained(model_directory)
 
     # Load the model and tokenizer from the specified directory
-    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, torch_dtype=torch.float16).to(0)
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
 
     # Calculate the time taken to load the model and tokenizer
