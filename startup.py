@@ -1,6 +1,5 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from huggingface_hub import HfApi, HfFolder
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 import torch
 import time
 import os
@@ -45,13 +44,19 @@ if __name__ == "__main__":
 
     # Define the directory where the model and tokenizer are saved
     model_directory = "/app/model"
-
+    # Debugging output
+    print(f"Contents of {model_directory}:")
+    print(os.listdir(model_directory))
+    
     # Start timing the loading process
     print("STARTING MODEL LOAD FROM DISK")
     load_time = time.time()
 
+    # Load the configuration
+    config = AutoConfig.from_pretrained(model_directory)
+
     # Load the model and tokenizer from the specified directory
-    model = AutoModelForCausalLM.from_pretrained(model_directory)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config)
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
 
     # Calculate the time taken to load the model and tokenizer
