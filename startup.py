@@ -7,12 +7,11 @@ def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=
     # Load the model and tokenizer
     
     # Tokenize the input prompt
-    inputs = tokenizer(prompt, return_tensors="pt")
+    inputs = tokenizer(prompt, return_tensors="pt").to(0)
 
     # Generate text
     start_time = time.time()  # Start timing
-    inputs = tokenizer(prompt, return_tensors="pt").to(0)
-    outputs = model.generate(**inputs, max_new_tokens=500)
+    outputs = model.generate(**inputs, max_new_tokens=20)
     
 
     # Decode and return the generated text
@@ -46,7 +45,7 @@ if __name__ == "__main__":
     config = AutoConfig.from_pretrained(model_directory)
 
     # Load the model and tokenizer from the specified directory
-    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, load_in_4bit=True)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, torch_dtype=torch.float16).to(0)
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
 
     # Calculate the time taken to load the model and tokenizer
