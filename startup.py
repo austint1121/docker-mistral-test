@@ -42,7 +42,7 @@ if __name__ == "__main__":
     config = AutoConfig.from_pretrained(model_directory)
 
     # Load the model and tokenizer from the specified directory
-    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, load_in_8bit=True)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, load_in_8bit=True, device_map='cpu')
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
 
     # Calculate the time taken to load the model and tokenizer
