@@ -3,6 +3,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 import torch
 import time
 import os
+from accelerate import infer_auto_device_map, dispatch_model
 def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=50):
     # Load the model and tokenizer
     # Generate text
@@ -40,10 +41,16 @@ if __name__ == "__main__":
 
     # Load the configuration
     config = AutoConfig.from_pretrained(model_directory)
-
+    
+    model = AutoModelForCausalLM.from_config(config)
+    device_map = infer_auto_device_map(model, max_memory={"cpu": "300GiB", "cuda": "23GiB"})
+    model = dispatch_model(model, device_map=device_map)
+    model = model.from_pretrained(model_directory, load_in_4bit=True)
     # Load the model and tokenizer from the specified directory
-    model = AutoModelForCausalLM.from_pretrained(model_directory, config=config, load_in_4bit=True, device_map='cpu')
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
+
+
+# Dispatch the model according to the device map
 
     # Calculate the time taken to load the model and tokenizer
     load_end = time.time() - load_time
