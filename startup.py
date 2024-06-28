@@ -13,7 +13,7 @@ def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=
     # Load the model and tokenizer
     # Generate text
     start_time = time.time()  # Start timing
-    inputs = tokenizer(prompt, return_tensors="pt").to(0)
+    inputs = tokenizer(prompt, return_tensors="pt")
     outputs = model.generate(**inputs, max_new_tokens=500)
     
 
