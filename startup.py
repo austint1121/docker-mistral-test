@@ -3,7 +3,12 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 import torch
 import time
 import os
-from accelerate import infer_auto_device_map, dispatch_model
+from accelerate import infer_auto_device_map, dispatch_model, init_empty_weights
+import safetensors.torch
+from accelerate.utils import BnbQuantizationConfig
+
+
+
 def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=50):
     # Load the model and tokenizer
     # Generate text
@@ -31,21 +36,24 @@ if __name__ == "__main__":
 
     # Define the directory where the model and tokenizer are saved
     model_directory = "/app/model"
-    # Debugging output
-    print(f"Contents of {model_directory}:")
-    print(os.listdir(model_directory))
-
+    offload_path = "/app/offload"
+    # bnb quantizatin
+   
     # Start timing the loading process
     print("STARTING MODEL LOAD FROM DISK")
     load_time = time.time()
 
     # Load the configuration
-    config = AutoConfig.from_pretrained(model_directory)
+    # config = AutoConfig.from_pretrained(model_directory)
+    bnb_quantization_config = BnbQuantizationConfig(load_in_8bit=True, llm_int8_threshold = 6)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, low_cpu_mem_usage=True, bnb_quantization_config=bnb_quantization_config, device_map='auto', offload_folder = offload_path)
+
+        
     
-    model = AutoModelForCausalLM.from_config(config)
-    device_map = infer_auto_device_map(model, max_memory={"cpu": "300GiB", "cuda": "23GiB"})
-    model = dispatch_model(model, device_map=device_map)
-    model = model.from_pretrained(model_directory, load_in_4bit=True)
+    # model = AutoModelForCausalLM.from_config(config)
+    # device_map = infer_auto_device_map(model, max_memory={"cpu": "300GiB", "cuda": "23GiB"})
+    # model = dispatch_model(model, device_map=device_map)
+    # model = model.from_pretrained(model_directory, load_in_4bit=True)
     # Load the model and tokenizer from the specified directory
     tokenizer = AutoTokenizer.from_pretrained(model_directory)
 
