@@ -45,10 +45,8 @@ if __name__ == "__main__":
 
     # Load the configuration
     # config = AutoConfig.from_pretrained(model_directory)
-    bnb_quantization_config = BnbQuantizationConfig(load_in_8bit=True, llm_int8_threshold = 6)
-    model = AutoModelForCausalLM.from_pretrained(model_directory, low_cpu_mem_usage=True, bnb_quantization_config=bnb_quantization_config, device_map='auto', offload_folder = offload_path)
-
-        
+    # bnb_quantization_config = BnbQuantizationConfig(load_in_8bit=True, llm_int8_threshold = 6)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, low_cpu_mem_usage=True, device_map='auto', offload_folder = offload_path, torch_dtype=torch.float16).to(0)
     
     # model = AutoModelForCausalLM.from_config(config)
     # device_map = infer_auto_device_map(model, max_memory={"cpu": "300GiB", "cuda": "23GiB"})
