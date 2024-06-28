@@ -14,6 +14,8 @@ def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=
     # Generate text
     start_time = time.time()  # Start timing
     inputs = tokenizer(prompt, return_tensors="pt")
+    device = next(model.parameters()).device
+    inputs = {k: v.to(device) for k, v in inputs.items()}
     outputs = model.generate(**inputs, max_new_tokens=500)
     
 
