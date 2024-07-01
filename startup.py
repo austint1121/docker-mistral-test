@@ -16,7 +16,7 @@ def generate_text(model, tokenizer, prompt, model_path='/app/model', max_length=
     inputs = tokenizer(prompt, return_tensors="pt")
     device = next(model.parameters()).device
     inputs = {k: v.to(device) for k, v in inputs.items()}
-    outputs = model.generate(**inputs, max_new_tokens=500)
+    outputs = model.generate(**inputs, max_new_tokens=50)
     
 
     # Decode and return the generated text
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Define the directory where the model and tokenizer are saved
     model_directory = "/app/model"
-    offload_path = "/app/offload"
+    # offload_path = "/app/offload"
     # bnb quantizatin
    
     # Start timing the loading process
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Load the configuration
     # config = AutoConfig.from_pretrained(model_directory)
     # bnb_quantization_config = BnbQuantizationConfig(load_in_8bit=True, llm_int8_threshold = 6)
-    model = AutoModelForCausalLM.from_pretrained(model_directory, low_cpu_mem_usage=True, device_map='auto', offload_folder = offload_path, torch_dtype=torch.float16)
+    model = AutoModelForCausalLM.from_pretrained(model_directory, low_cpu_mem_usage=True, device_map='auto', torch_dtype=torch.float16)
     
     # model = AutoModelForCausalLM.from_config(config)
     # device_map = infer_auto_device_map(model, max_memory={"cpu": "300GiB", "cuda": "23GiB"})
@@ -64,17 +64,19 @@ if __name__ == "__main__":
     load_end = time.time() - load_time
     print(f"Loading time took: {load_end}")
 
-
+    print("Starting Prompt 1")
     prompt_1 = "Hello, what is your name?"
     text_1, time_1 = generate_text(model, tokenizer, prompt_1)
     print(f"Prompt 1 took {time_1} sec")
     print(f"Response 1: {text_1}")
 
+    print("Starting Prompt 2")
     prompt_2 = "Create a Python function that takes an integer as an argument and returns 'Even' for even numbers or 'Odd' for odd numbers."
     text_2, time_2 = generate_text(model, tokenizer,prompt_2)
     print(f"Prompt 2 took {time_2} sec")
     print(f"Response 2: {text_2}")
 
+    print("Starting Prompt 3")
     prompt_3 = pandas_problem = """input df = [
     [1, 2, 3],
     [4, 5, 6]
@@ -85,6 +87,7 @@ if __name__ == "__main__":
     print(f"Prompt 3 took {time_3} sec")
     print(f"Response 3: {text_3}")
 
+    print("Starting Prompt 4")
     prompt_4 = """Create an SQLite function that returns a dataset with two columns: number and is_even, where number contains the original input value, and is_even containing "Even" or "Odd" depending on number column values."""
     text_4, time_4 = generate_text(model, tokenizer,prompt_4)
     print(f"Prompt 4 took {time_4} sec")
